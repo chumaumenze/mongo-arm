@@ -18,8 +18,8 @@ build-mongosrc() {
         ;;
     esac
 
-
-    docker run --rm -v $(pwd)/mongo:/workdir \
+    cpucount="$(cat /proc/cpuinfo | grep processor | wc -l)"
+    docker run --rm --privileged -v $(pwd)/mongo:/workdir \
         -e CROSS_TRIPLE=aarch64-linux-gnu \
         chumaumenze/crossbuild bash -c "
         printf 'Install additional build dependencies...\n'
@@ -30,7 +30,7 @@ build-mongosrc() {
         python3 -m pip install -r etc/pip/compile-requirements.txt
 
         printf 'Compiling...\n'
-        python3 buildscripts/scons.py install-mongod \
+        python3 buildscripts/scons.py -j$cpucount install-mongod \
             MONGO_VERSION=${TARGET_VERSION} \
             CC=/usr/bin/aarch64-linux-gnu-gcc-10 \
             CXX=/usr/bin/aarch64-linux-gnu-g++-10 \
