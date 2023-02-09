@@ -18,16 +18,14 @@ jobs:
       - name: Get short SHA
         id: short_sha
         run: echo ::set-output name=sha::$(git rev-parse --short ${{ github.sha }})
-      
-      - name: Download & build crossbuild
-        env:
-          CROSSBUILD_VERSION: d06cdc31fce0c85ad78408b44794366dafd59554 
-        run: |
-          source mongo-build.sh
-          build-crossbuild
 
       - name: Build Mongo from source
-        run: build-mongosrc
+        env:
+          MONGO_VERSION: ${{ vars.MONGO_VERSION }}
+          TARGET_ARM: ${{ vars.TARGET_ARM }}
+        run: |
+          source mongo-build.sh
+          build-mongosrc
 
       - name: 'Upload build artifacts'
         uses: actions/upload-artifact@v3

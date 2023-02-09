@@ -1,21 +1,7 @@
 #!/usr/bin/env bash
 
-CROSSBUILD_VERSION="${CROSSBUILD_VERSION:-d06cdc31fce0c85ad78408b44794366dafd59554}"
 MONGO_VERSION="${MONGO_VERSION:-6.2.0}"
 TARGET_ARM="${TARGET_ARM:-arm64}"
-
-build-crossbuild() {
-    # Download and unzip crossbuild
-    wget -O cb.zip https://github.com/multiarch/crossbuild/archive/$CROSSBUILD_VERSION.zip
-    ls -aslh ./
-    unzip -d cb/ cb.zip
-
-    # Use Debian Bullseye instead of Stretch
-    sed -i -e "/buildpack-deps:/s/stretch-curl/bullseye-curl/g" "cb/crossbuild-$CROSSBUILD_VERSION/Dockerfile"
-
-    # Build crossbuild docker image
-    docker build -t crossbuild "cb/crossbuild-$CROSSBUILD_VERSION/"
-}
 
 build-mongosrc() {    
     git clone --depth=1 -b "r${MONGO_VERSION}" https://github.com/mongodb/mongo.git
@@ -35,7 +21,7 @@ build-mongosrc() {
 
     docker run --rm -v $(pwd)/mongo:/workdir \
         -e CROSS_TRIPLE=aarch64-linux-gnu \
-        crossbuild bash -c "
+        chumaumenze/crossbuild bash -c "
         printf 'Install additional build dependencies...\n'
         apt install -y python-dev-is-python3 python3-pip \
             libssl-dev:$arch libcurl4-openssl-dev:$arch liblzma-dev:$arch
