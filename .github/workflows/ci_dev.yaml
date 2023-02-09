@@ -1,0 +1,36 @@
+---
+name: CI for main branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Get short SHA
+        id: short_sha
+        run: echo ::set-output name=sha::$(git rev-parse --short ${{ github.sha }})
+      
+      - name: Download & build crossbuild
+        env:
+          CROSSBUILD_VERSION: d06cdc31fce0c85ad78408b44794366dafd59554 
+        run: |
+          source mongo-build.sh
+          build-crossbuild
+
+      - name: Build Mongo from source
+        run: build-mongosrc
+
+      - name: 'Upload build artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: mongo/build/install
