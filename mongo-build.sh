@@ -7,10 +7,10 @@ TARGET_ARM="${TARGET_ARM:-arm64}"
 build-crossbuild() {
     # Download and unzip crossbuild
     wget https://github.com/multiarch/crossbuild/archive/$CROSSBUILD_VERSION.zip \
-        -o crossbuild.zip && ls -aslh ./ && unzip crossbuild.zip
+        -O crossbuild.zip && ls -aslh ./ && unzip -d crossbuild/ crossbuild.zip
 
     # Use Debian Bullseye instead of Stretch
-    sed -iE -e "/buildpack-deps:/s/stretch-curl/bullseye-curl/g" crossbuild/Dockerfile
+    sed -i -e "/buildpack-deps:/s/stretch-curl/bullseye-curl/g" crossbuild/Dockerfile
 
     # Build crossbuild docker image
     docker build -t crossbuild crossbuild/
