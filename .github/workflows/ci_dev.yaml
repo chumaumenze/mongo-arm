@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Mongo from source
         env:
-          MONGO_VERSION: ${{ vars.MONGO_VERSION }}
+          TARGET_VERSION: ${{ vars.TARGET_VERSION }}
           TARGET_ARM: ${{ vars.TARGET_ARM }}
         run: |
           source mongo-build.sh
