@@ -30,11 +30,12 @@ build-mongosrc() {
         python3 -m pip install -r etc/pip/compile-requirements.txt
 
         printf 'Compiling...\n'
-        python3 buildscripts/scons.py install-mongod --ssl \
+        python3 buildscripts/scons.py install-mongod \
+            MONGO_VERSION=${TARGET_VERSION} \
             CC=/usr/bin/aarch64-linux-gnu-gcc-10 \
             CXX=/usr/bin/aarch64-linux-gnu-g++-10 \
             CCFLAGS='-march=armv8-a+crc -mtune=cortex-a72' \
-            --install-mode=hygienic --install-action=hardlink \
+            --ssl --install-mode=hygienic --install-action=hardlink \
             --disable-warnings-as-errors --separate-debug archive-core{,-debug}
         
         printf 'Stripping compiled binary...\n'
