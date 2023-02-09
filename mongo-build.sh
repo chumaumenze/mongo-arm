@@ -6,14 +6,15 @@ TARGET_ARM="${TARGET_ARM:-arm64}"
 
 build-crossbuild() {
     # Download and unzip crossbuild
-    wget https://github.com/multiarch/crossbuild/archive/$CROSSBUILD_VERSION.zip \
-        -O crossbuild.zip && ls -aslh ./ && unzip -d crossbuild/ crossbuild.zip
+    wget -O cb.zip https://github.com/multiarch/crossbuild/archive/$CROSSBUILD_VERSION.zip
+    ls -aslh ./
+    unzip -d cb/ cb.zip
 
     # Use Debian Bullseye instead of Stretch
-    sed -i -e "/buildpack-deps:/s/stretch-curl/bullseye-curl/g" crossbuild/Dockerfile
+    sed -i -e "/buildpack-deps:/s/stretch-curl/bullseye-curl/g" "cb/crossbuild-$CROSSBUILD_VERSION/Dockerfile"
 
     # Build crossbuild docker image
-    docker build -t crossbuild crossbuild/
+    docker build -t crossbuild "cb/crossbuild-$CROSSBUILD_VERSION/"
 }
 
 build-mongosrc() {    
